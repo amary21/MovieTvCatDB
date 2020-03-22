@@ -11,6 +11,9 @@ import java.util.ArrayList;
 
 public class DetailMovie implements Parcelable {
 
+    @SerializedName("backdrop_path")
+    @Expose
+    private String backdropPath;
     @SerializedName("genres")
     @Expose
     private ArrayList<Genre> genres = null;
@@ -32,6 +35,10 @@ public class DetailMovie implements Parcelable {
     @SerializedName("vote_average")
     @Expose
     private Double voteAverage;
+
+    public String getBackdropPath() {
+        return backdropPath;
+    }
 
     public ArrayList<Genre> getGenres() {
         return genres;
@@ -65,7 +72,7 @@ public class DetailMovie implements Parcelable {
     public static class Genre  {
         @SerializedName("name")
         @Expose
-        private String name;
+        private String name = null;
 
         public String getName() {
             return name;
@@ -75,7 +82,7 @@ public class DetailMovie implements Parcelable {
     public static class ProductionCompany {
         @SerializedName("name")
         @Expose
-        private String name;
+        private String name = null;
 
         public String getName() {
             return name;
@@ -84,6 +91,9 @@ public class DetailMovie implements Parcelable {
     }
 
 
+    public DetailMovie() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -91,6 +101,7 @@ public class DetailMovie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.backdropPath);
         dest.writeList(this.genres);
         dest.writeString(this.homepage);
         dest.writeString(this.overview);
@@ -100,10 +111,8 @@ public class DetailMovie implements Parcelable {
         dest.writeValue(this.voteAverage);
     }
 
-    public DetailMovie() {
-    }
-
     private DetailMovie(Parcel in) {
+        this.backdropPath = in.readString();
         this.genres = new ArrayList<>();
         in.readList(this.genres, Genre.class.getClassLoader());
         this.homepage = in.readString();
@@ -115,7 +124,7 @@ public class DetailMovie implements Parcelable {
         this.voteAverage = (Double) in.readValue(Double.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<DetailMovie> CREATOR = new Parcelable.Creator<DetailMovie>() {
+    public static final Creator<DetailMovie> CREATOR = new Creator<DetailMovie>() {
         @Override
         public DetailMovie createFromParcel(Parcel source) {
             return new DetailMovie(source);

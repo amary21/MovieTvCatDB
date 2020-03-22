@@ -18,18 +18,18 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-@SuppressWarnings("deprecation")
+
 public class SettingActivity extends BaseActivity {
     private Locale locale;
 
-    @BindView(R.id.rg_setbahasa)
-    RadioGroup rbSetBahasa;
-    @BindView(R.id.rb_english)
-    RadioButton rbEnglish;
-    @BindView(R.id.rb_indonesia)
-    RadioButton rbIndonesia;
+    @BindView(R.id.rb_set_language)
+    RadioGroup rbSetLanguage;
+    @BindView(R.id.rb_en)
+    RadioButton rbEn;
+    @BindView(R.id.rb_id)
+    RadioButton rbId;
     @BindView(R.id.btn_save_language)
-    Button btnSaveLeanguage;
+    Button btnSaveLanguage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +44,11 @@ public class SettingActivity extends BaseActivity {
 
 
         if (bhasa.equals("en-US")) {
-            rbEnglish.setChecked(true);
-            rbIndonesia.setChecked(false);
-        }else if (bhasa.equals("id-ID")){
-            rbEnglish.setChecked(false);
-            rbIndonesia.setChecked(true);
+            rbEn.setChecked(true);
+            rbId.setChecked(false);
+        } else if (bhasa.equals("id-ID")) {
+            rbEn.setChecked(false);
+            rbId.setChecked(true);
         }
 
         setBahasa();
@@ -66,40 +66,40 @@ public class SettingActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void setBahasa(){
-        rbSetBahasa.setOnCheckedChangeListener((group, checkedId) -> {
+    public void setBahasa() {
+        rbSetLanguage.setOnCheckedChangeListener((group, checkedId) -> {
             RadioButton rb = group.findViewById(checkedId);
             if (rb != null) {
                 switch (checkedId) {
-                    case R.id.rb_english:
+                    case R.id.rb_en:
                         locale = new Locale("en");
                         rb.setChecked(true);
-                        SettingActivity.this.setLocale();
+                        setLocaleLanguage(locale);
                         break;
-                    case R.id.rb_indonesia:
+                    case R.id.rb_id:
                         locale = new Locale("in");
-                        SettingActivity.this.setLocale();
+                        setLocaleLanguage(locale);
                         break;
                     default:
                         locale = new Locale("en");
-                        SettingActivity.this.setLocale();
+                        setLocaleLanguage(locale);
                 }
             }
         });
     }
 
-    public void btnSaveConfig(){
-        btnSaveLeanguage.setOnClickListener(v -> {
+    public void btnSaveConfig() {
+        btnSaveLanguage.setOnClickListener(v -> {
             Intent intent = new Intent(SettingActivity.this, MainActivity.class);
             SettingActivity.this.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
         });
     }
 
-    public void setLocale() {
-        DateConvert.setBhsData(locale.toString());
-        Locale.setDefault(locale);
+    public void setLocaleLanguage(Locale localeLanguage) {
+        DateConvert.setBhsData(localeLanguage.toString());
+        Locale.setDefault(localeLanguage);
         Configuration configuration = new Configuration();
-        configuration.locale = locale;
+        configuration.setLocale(localeLanguage);
         getBaseContext().getResources().updateConfiguration(configuration, getBaseContext().getResources().getDisplayMetrics());
 
     }

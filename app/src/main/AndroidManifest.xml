@@ -13,16 +13,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.DetailTvActivity"/>
-        <activity android:name=".activity.DetailMovieActivity" />
         <activity
-            android:name=".activity.SettingActivity" />
+            android:name=".activity.FavoriteActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activity.DetailTvActivity" />
+        <activity android:name=".activity.DetailMovieActivity" />
+        <activity android:name=".activity.SettingActivity" />
         <activity
             android:name=".activity.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

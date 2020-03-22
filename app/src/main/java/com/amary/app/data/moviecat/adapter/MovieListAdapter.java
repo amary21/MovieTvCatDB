@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,11 +21,11 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MovieCatListAdapter extends RecyclerView.Adapter<MovieCatListAdapter.CategoryViewHolder> {
+public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.CategoryViewHolder> {
     private ArrayList<ResultMovie> movieData;
     private static ClickListener clickListener;
 
-    public MovieCatListAdapter(ArrayList<ResultMovie> movieData) {
+    public MovieListAdapter(ArrayList<ResultMovie> movieData) {
         this.movieData = movieData;
     }
 
@@ -56,18 +57,23 @@ public class MovieCatListAdapter extends RecyclerView.Adapter<MovieCatListAdapte
     public class CategoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         @BindView(R.id.img_poster)
         ImageView imgPoster;
+        @BindView(R.id.img_backdrops)
+        ImageView imgBackdrops;
         @BindView(R.id.txt_judul)
         TextView txtJudul;
         @BindView(R.id.txt_tgl_rilis)
         TextView txtTglRilis;
         @BindView(R.id.txt_rating)
         TextView txtRating;
+        @BindView(R.id.btn_delete_favorite)
+        Button btnDeleteFavorite;
 
 
         CategoryViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
+            btnDeleteFavorite.setVisibility(View.GONE);
         }
 
         @Override
@@ -81,11 +87,12 @@ public class MovieCatListAdapter extends RecyclerView.Adapter<MovieCatListAdapte
             txtTglRilis.setText(DateConvert.convert(resultMovie.getReleaseDate()));
             txtRating.setText(resultMovie.getVoteAverage().toString());
             ImgDownload.imgPoster(resultMovie.getPosterPath(),imgPoster);
+            ImgDownload.imgPoster(resultMovie.getBackdropPath(), imgBackdrops);
         }
     }
 
     public void setOnItemClickListener(ClickListener clickListener) {
-        MovieCatListAdapter.clickListener = clickListener;
+        MovieListAdapter.clickListener = clickListener;
     }
 
 

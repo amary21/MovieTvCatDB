@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -15,12 +16,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.amary.app.data.moviecat.R;
 import com.amary.app.data.moviecat.adapter.DetailMovieAdapter;
 import com.amary.app.data.moviecat.base.BaseActivity;
+import com.amary.app.data.moviecat.database.datasource.MovieRepository;
+import com.amary.app.data.moviecat.database.local.LocalDatabase;
+import com.amary.app.data.moviecat.database.local.MovieDataSource;
+import com.amary.app.data.moviecat.database.model_db.Movie;
 import com.amary.app.data.moviecat.model.DetailMovie;
 import com.amary.app.data.moviecat.model.GetImageMovie;
 import com.amary.app.data.moviecat.model.ImageMovieItem;
 import com.amary.app.data.moviecat.model.ResultMovie;
 import com.amary.app.data.moviecat.utils.DateConvert;
 import com.amary.app.data.moviecat.utils.ImgDownload;
+import com.amary.app.data.moviecat.utils.LocalData;
 import com.amary.app.data.moviecat.view.DetailMovieView;
 
 import java.util.ArrayList;
@@ -43,6 +49,8 @@ public class DetailMovieActivity extends BaseActivity implements DetailMovieView
         this.detailDatMovie = detailDatMovie;
     }
 
+    @BindView(R.id.txt_info_title_movie)
+    TextView txtTitleMovie;
     @BindView(R.id.txt_info_tanggal_movie)
     TextView txtTanggalMovie;
     @BindView(R.id.txt_info_score_movie)
@@ -57,10 +65,8 @@ public class DetailMovieActivity extends BaseActivity implements DetailMovieView
     TextView txtSinopsisMovie;
     @BindView(R.id.img_info_poster_movie)
     ImageView imgPosterMovie;
-    @BindView(R.id.tv_date)
-    TextView tvDate;
-    @BindView(R.id.tv_score)
-    TextView tvScore;
+    @BindView(R.id.img_info_backdroppath_movie)
+    ImageView imgBackdroppathMovie;
     @BindView(R.id.tv_genre)
     TextView tvGenre;
     @BindView(R.id.tv_production)
@@ -71,6 +77,18 @@ public class DetailMovieActivity extends BaseActivity implements DetailMovieView
     TextView tvSinopsis;
     @BindView(R.id.rv_screenshot)
     RecyclerView rvScreenshot;
+    @BindView(R.id.tv_description)
+    TextView tvDescription;
+    @BindView(R.id.tv_images)
+    TextView tvImages;
+    @BindView(R.id.v_1)
+    View vLine1;
+    @BindView(R.id.v_2)
+    View vLine2;
+    @BindView(R.id.v_3)
+    View vLine3;
+    @BindView(R.id.btn_set_favorite_movie)
+    Button btnSetFavoriteMovie;
     @BindView(R.id.tv_detail_error_movie)
     TextView tvDetailErrorMovie;
     @BindView(R.id.progressBar_movie)
@@ -86,9 +104,11 @@ public class DetailMovieActivity extends BaseActivity implements DetailMovieView
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         ResultMovie resultMovie = getIntent().getParcelableExtra(EXTRA_MOVIE);
-        Objects.requireNonNull(getSupportActionBar()).setTitle(resultMovie.getTitle());
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.movies);
+        txtTitleMovie.setText(resultMovie.getTitle());
 
         showImage();
+        getDB();
 
         if (savedInstanceState == null){
             getDetailMoviePresenter().getDetailMovie(resultMovie.getId(),bhsLocal,this);
@@ -100,6 +120,44 @@ public class DetailMovieActivity extends BaseActivity implements DetailMovieView
             setDetailDatMovie(detailDatMovie);
             dataDetail(getDetailDatMovie());
         }
+
+        if (LocalData.movieRepository.isMovie(resultMovie.getId()) == 1){
+            btnSetFavoriteMovie.setText(R.string.remove_to_favorite);
+        }else {
+            btnSetFavoriteMovie.setText(R.string.add_to_favorite);
+        }
+
+        btnSetFavoriteMovie.setOnClickListener(v -> {
+            if (LocalData.movieRepository.isMovie(resultMovie.getId()) != 1){
+                addMovieFavorite(resultMovie, true);
+                btnSetFavoriteMovie.setText(R.string.remove_to_favorite);
+            }else {
+                addMovieFavorite(resultMovie, false);
+                btnSetFavoriteMovie.setText(R.string.add_to_favorite);
+            }
+
+        });
+    }
+
+    private void addMovieFavorite(ResultMovie resultMovie, boolean isAdd) {
+        Movie movie = new Movie();
+        movie.idMovie = resultMovie.getId();
+        movie.titleMovie = resultMovie.getTitle();
+        movie.dateMovie = resultMovie.getReleaseDate();
+        movie.rateMovie = resultMovie.getVoteAverage();
+        movie.posterMovie = resultMovie.getPosterPath();
+        movie.backdropsMovie = resultMovie.getBackdropPath();
+
+        if (isAdd){
+            LocalData.movieRepository.insertItemMovie(movie);
+        }else {
+            LocalData.movieRepository.deleteItemMovie(movie);
+        }
+    }
+
+    private void getDB() {
+        LocalData.localDatabase = LocalDatabase.getInstance(this);
+        LocalData.movieRepository = MovieRepository.getInstance(MovieDataSource.getInstance(LocalData.localDatabase.movieDAO()));
     }
 
 
@@ -129,14 +187,13 @@ public class DetailMovieActivity extends BaseActivity implements DetailMovieView
         txtSinopsisMovie.setText(detailMovie.getOverview());
 
         ImgDownload.imgPoster(detailMovie.getPosterPath(),imgPosterMovie);
+        ImgDownload.imgPoster(detailMovie.getBackdropPath(),imgBackdroppathMovie);
     }
 
     @Override
     public void showLoading() {
         pbLoadingDetail.setVisibility(View.VISIBLE);
-        tvDate.setVisibility(View.GONE);
         tvGenre.setVisibility(View.GONE);
-        tvScore.setVisibility(View.GONE);
         tvProduction.setVisibility(View.GONE);
         tvHomepage.setVisibility(View.GONE);
         tvSinopsis.setVisibility(View.GONE);
@@ -145,9 +202,7 @@ public class DetailMovieActivity extends BaseActivity implements DetailMovieView
     @Override
     public void hideLoading() {
         pbLoadingDetail.setVisibility(View.GONE);
-        tvDate.setVisibility(View.VISIBLE);
         tvGenre.setVisibility(View.VISIBLE);
-        tvScore.setVisibility(View.VISIBLE);
         tvProduction.setVisibility(View.VISIBLE);
         tvHomepage.setVisibility(View.VISIBLE);
         tvSinopsis.setVisibility(View.VISIBLE);
@@ -162,12 +217,12 @@ public class DetailMovieActivity extends BaseActivity implements DetailMovieView
     @Override
     public void onErrorData() {
         pbLoadingDetail.setVisibility(View.GONE);
-        tvDate.setVisibility(View.GONE);
         tvGenre.setVisibility(View.GONE);
-        tvScore.setVisibility(View.GONE);
         tvProduction.setVisibility(View.GONE);
         tvHomepage.setVisibility(View.GONE);
         tvSinopsis.setVisibility(View.GONE);
+        tvDescription.setVisibility(View.GONE);
+        tvImages.setVisibility(View.GONE);
         txtTanggalMovie.setVisibility(View.GONE);
         txtGenreMovie.setVisibility(View.GONE);
         txtScoreMovie.setVisibility(View.GONE);
@@ -175,7 +230,12 @@ public class DetailMovieActivity extends BaseActivity implements DetailMovieView
         txtHomePageMovie.setVisibility(View.GONE);
         txtSinopsisMovie.setVisibility(View.GONE);
         imgPosterMovie.setVisibility(View.GONE);
+        imgBackdroppathMovie.setVisibility(View.GONE);
+        btnSetFavoriteMovie.setVisibility(View.GONE);
         rvScreenshot.setVisibility(View.GONE);
+        vLine1.setVisibility(View.GONE);
+        vLine2.setVisibility(View.GONE);
+        vLine3.setVisibility(View.GONE);
         tvDetailErrorMovie.setVisibility(View.VISIBLE);
     }
 

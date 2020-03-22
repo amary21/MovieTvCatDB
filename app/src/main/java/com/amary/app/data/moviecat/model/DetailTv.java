@@ -11,6 +11,9 @@ import java.util.ArrayList;
 
 public class DetailTv implements Parcelable {
 
+    @SerializedName("backdrop_path")
+    @Expose
+    private String backdropPath;
     @SerializedName("first_air_date")
     @Expose
     private String firstAirDate;
@@ -35,6 +38,10 @@ public class DetailTv implements Parcelable {
     @SerializedName("vote_average")
     @Expose
     private Double voteAverage;
+
+    public String getBackdropPath() {
+        return backdropPath;
+    }
 
     public String getFirstAirDate() {
         return firstAirDate;
@@ -71,7 +78,7 @@ public class DetailTv implements Parcelable {
     public class Genre {
         @SerializedName("name")
         @Expose
-        private String name;
+        private String name = null;
 
         public String getName() {
             return name;
@@ -83,7 +90,7 @@ public class DetailTv implements Parcelable {
 
         @SerializedName("name")
         @Expose
-        private String name;
+        private String name = null;
 
         public String getName() {
             return name;
@@ -92,6 +99,9 @@ public class DetailTv implements Parcelable {
     }
 
 
+    public DetailTv() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -99,6 +109,7 @@ public class DetailTv implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.backdropPath);
         dest.writeString(this.firstAirDate);
         dest.writeList(this.genres);
         dest.writeString(this.homepage);
@@ -109,10 +120,8 @@ public class DetailTv implements Parcelable {
         dest.writeValue(this.voteAverage);
     }
 
-    public DetailTv() {
-    }
-
     private DetailTv(Parcel in) {
+        this.backdropPath = in.readString();
         this.firstAirDate = in.readString();
         this.genres = new ArrayList<>();
         in.readList(this.genres, Genre.class.getClassLoader());
@@ -125,7 +134,7 @@ public class DetailTv implements Parcelable {
         this.voteAverage = (Double) in.readValue(Double.class.getClassLoader());
     }
 
-    public static final Parcelable.Creator<DetailTv> CREATOR = new Parcelable.Creator<DetailTv>() {
+    public static final Creator<DetailTv> CREATOR = new Creator<DetailTv>() {
         @Override
         public DetailTv createFromParcel(Parcel source) {
             return new DetailTv(source);

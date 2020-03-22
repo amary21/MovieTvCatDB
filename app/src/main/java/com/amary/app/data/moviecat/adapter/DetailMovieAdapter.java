@@ -10,9 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.amary.app.data.moviecat.R;
 import com.amary.app.data.moviecat.model.ImageMovieItem;
-import com.amary.app.data.moviecat.networking.ApiServer;
 import com.amary.app.data.moviecat.utils.ImgDownload;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 

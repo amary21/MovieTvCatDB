@@ -8,7 +8,7 @@
     tools:context=".activity.SettingActivity">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tv_language"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -22,7 +22,7 @@
         tools:ignore="MissingConstraints" />
 
     <RadioGroup
-        android:id="@+id/rg_setbahasa"
+        android:id="@+id/rb_set_language"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -31,11 +31,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/tv_language"
         tools:ignore="MissingConstraints">
 
         <RadioButton
-            android:id="@+id/rb_english"
+            android:id="@+id/rb_en"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -44,7 +44,7 @@
             android:textSize="18sp" />
 
         <RadioButton
-            android:id="@+id/rb_indonesia"
+            android:id="@+id/rb_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -64,10 +64,10 @@
         android:textColor="@color/White"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/rg_setbahasa"
+        app:layout_constraintEnd_toEndOf="@+id/rb_set_language"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/rg_setbahasa"
-        app:layout_constraintTop_toBottomOf="@+id/rg_setbahasa"
+        app:layout_constraintStart_toStartOf="@+id/rb_set_language"
+        app:layout_constraintTop_toBottomOf="@+id/rb_set_language"
         app:layout_constraintVertical_bias="0.944"
         tools:ignore="PrivateResource" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class DisTvResponse {
     @SerializedName("results")
     @Expose
-    private ArrayList<ResultTv> results;
+    private ArrayList<ResultTv> results = null;
 
     public ArrayList<ResultTv> getResults() {
         return results;

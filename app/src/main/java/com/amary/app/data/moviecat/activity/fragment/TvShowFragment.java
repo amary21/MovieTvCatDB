@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.amary.app.data.moviecat.R;
 import com.amary.app.data.moviecat.activity.DetailTvActivity;
+import com.amary.app.data.moviecat.activity.FavoriteActivity;
 import com.amary.app.data.moviecat.activity.SettingActivity;
 import com.amary.app.data.moviecat.adapter.TvShowListAdapter;
 import com.amary.app.data.moviecat.base.BaseFragment;
@@ -51,7 +52,7 @@ public class TvShowFragment extends BaseFragment implements TvShowListView {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_movies, container, false);
+        return inflater.inflate(R.layout.fragment_list, container, false);
     }
 
     @Override
@@ -95,6 +96,10 @@ public class TvShowFragment extends BaseFragment implements TvShowListView {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.mn_app_setting) {
             Intent intent = new Intent(getActivity(), SettingActivity.class);
+            startActivity(intent);
+        }
+        if (item.getItemId() == R.id.mn_app_favorite){
+            Intent intent = new Intent(getActivity(), FavoriteActivity.class);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);

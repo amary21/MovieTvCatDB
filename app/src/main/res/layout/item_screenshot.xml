@@ -11,7 +11,7 @@
         app:cardElevation="2dp"
         android:layout_margin="12dp"
         app:cardUseCompatPadding="true"
-        tools:cardCornerRadius="5dp"
+        tools:cardCornerRadius="10dp"
         tools:ignore="MissingConstraints">
             <ImageView
                 android:id="@+id/img_screenshot"

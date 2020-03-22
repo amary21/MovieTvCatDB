@@ -19,6 +19,9 @@ public class ResultMovie implements Parcelable {
     @SerializedName("poster_path")
     @Expose
     private String posterPath;
+    @SerializedName("backdrop_path")
+    @Expose
+    private String backdropPath;
     @SerializedName("release_date")
     @Expose
     private String releaseDate;
@@ -43,6 +46,9 @@ public class ResultMovie implements Parcelable {
         return releaseDate;
     }
 
+    public String getBackdropPath() {
+        return backdropPath;
+    }
 
     @Override
     public int describeContents() {
@@ -55,6 +61,7 @@ public class ResultMovie implements Parcelable {
         dest.writeValue(this.voteAverage);
         dest.writeString(this.title);
         dest.writeString(this.posterPath);
+        dest.writeString(this.backdropPath);
         dest.writeString(this.releaseDate);
     }
 
@@ -63,10 +70,11 @@ public class ResultMovie implements Parcelable {
         this.voteAverage = (Double) in.readValue(Double.class.getClassLoader());
         this.title = in.readString();
         this.posterPath = in.readString();
+        this.backdropPath = in.readString();
         this.releaseDate = in.readString();
     }
 
-    public static final Parcelable.Creator<ResultMovie> CREATOR = new Parcelable.Creator<ResultMovie>() {
+    public static final Creator<ResultMovie> CREATOR = new Creator<ResultMovie>() {
         @Override
         public ResultMovie createFromParcel(Parcel source) {
             return new ResultMovie(source);

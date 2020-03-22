@@ -22,6 +22,9 @@ public class ResultTv implements Parcelable {
     @SerializedName("poster_path")
     @Expose
     private String posterPath;
+    @SerializedName("backdrop_path")
+    @Expose
+    private String backdropPath;
 
     public String getName() {
         return name;
@@ -43,6 +46,10 @@ public class ResultTv implements Parcelable {
         return posterPath;
     }
 
+    public String getBackdropPath() {
+        return backdropPath;
+    }
+
 
     @Override
     public int describeContents() {
@@ -56,6 +63,7 @@ public class ResultTv implements Parcelable {
         dest.writeValue(this.id);
         dest.writeValue(this.voteAverage);
         dest.writeString(this.posterPath);
+        dest.writeString(this.backdropPath);
     }
 
     private ResultTv(Parcel in) {
@@ -64,9 +72,10 @@ public class ResultTv implements Parcelable {
         this.id = (Integer) in.readValue(Integer.class.getClassLoader());
         this.voteAverage = (Double) in.readValue(Double.class.getClassLoader());
         this.posterPath = in.readString();
+        this.backdropPath = in.readString();
     }
 
-    public static final Parcelable.Creator<ResultTv> CREATOR = new Parcelable.Creator<ResultTv>() {
+    public static final Creator<ResultTv> CREATOR = new Creator<ResultTv>() {
         @Override
         public ResultTv createFromParcel(Parcel source) {
             return new ResultTv(source);

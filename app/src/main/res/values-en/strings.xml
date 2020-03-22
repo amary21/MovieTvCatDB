@@ -20,7 +20,11 @@
     <string name="homepage">Homepage :</string>
     <string name="production">Production :</string>
     <string name="rating">9.9</string>
-    <string name="score">Score :</string>
     <string name="synopsis">Synopsis</string>
     <string name="localization">en-US</string>
+    <string name="add_to_favorite">ADD TO FAVORITE</string>
+    <string name="description">Description</string>
+    <string name="favorite">Favorite</string>
+    <string name="images">Images</string>
+    <string name="remove_to_favorite">REMOVE FROM FAVORITE</string>
 </resources>

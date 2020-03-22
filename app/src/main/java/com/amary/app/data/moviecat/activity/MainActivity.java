@@ -1,6 +1,5 @@
 package com.amary.app.data.moviecat.activity;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.Toolbar;
@@ -50,9 +49,9 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-    }
+//    @Override
+//    public void onConfigurationChanged(Configuration newConfig) {
+//        super.onConfigurationChanged(newConfig);
+//    }
 
 }

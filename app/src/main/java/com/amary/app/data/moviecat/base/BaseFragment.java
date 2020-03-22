@@ -2,6 +2,8 @@ package com.amary.app.data.moviecat.base;
 
 import androidx.fragment.app.Fragment;
 
+import com.amary.app.data.moviecat.presenter.FavMoviePresenter;
+import com.amary.app.data.moviecat.presenter.FavTvPresenter;
 import com.amary.app.data.moviecat.presenter.MovieDataPresenter;
 import com.amary.app.data.moviecat.presenter.TvDataPresenter;
 
@@ -17,5 +19,13 @@ public class BaseFragment extends Fragment {
 
     protected TvDataPresenter getTvDataPresenter(){
         return new TvDataPresenter();
+    }
+
+    protected FavMoviePresenter getFavMoviePresenter(){
+        return new FavMoviePresenter();
+    }
+
+    protected FavTvPresenter getFavTvPresenter(){
+        return new FavTvPresenter();
     }
 }

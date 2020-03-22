@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -15,12 +16,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.amary.app.data.moviecat.R;
 import com.amary.app.data.moviecat.adapter.DetailTvAdapter;
 import com.amary.app.data.moviecat.base.BaseActivity;
+import com.amary.app.data.moviecat.database.datasource.TvRepository;
+import com.amary.app.data.moviecat.database.local.LocalDatabase;
+import com.amary.app.data.moviecat.database.local.TvDataSource;
+import com.amary.app.data.moviecat.database.model_db.Tv;
 import com.amary.app.data.moviecat.model.DetailTv;
 import com.amary.app.data.moviecat.model.GetImageTv;
 import com.amary.app.data.moviecat.model.ImageTvItem;
 import com.amary.app.data.moviecat.model.ResultTv;
 import com.amary.app.data.moviecat.utils.DateConvert;
 import com.amary.app.data.moviecat.utils.ImgDownload;
+import com.amary.app.data.moviecat.utils.LocalData;
 import com.amary.app.data.moviecat.view.DetailTVView;
 
 import java.util.ArrayList;
@@ -44,6 +50,8 @@ public class DetailTvActivity extends BaseActivity implements DetailTVView {
         this.detailTvItem = detailTvItem;
     }
 
+    @BindView(R.id.txt_info_title_tv)
+    TextView txtTitleTv;
     @BindView(R.id.txt_info_tanggal_tv)
     TextView txtTanggalTv;
     @BindView(R.id.txt_info_score_tv)
@@ -58,12 +66,10 @@ public class DetailTvActivity extends BaseActivity implements DetailTVView {
     TextView txtSinopsisTv;
     @BindView(R.id.img_info_poster_tv)
     ImageView imgPosterTv;
+    @BindView(R.id.img_info_backdroppath_tv)
+    ImageView imgbackdropPathTv;
     @BindView(R.id.rv_screenshot)
     RecyclerView rvScreenshot;
-    @BindView(R.id.tv_date)
-    TextView tvDate;
-    @BindView(R.id.tv_score)
-    TextView tvScore;
     @BindView(R.id.tv_genre)
     TextView tvGenre;
     @BindView(R.id.tv_production)
@@ -72,6 +78,18 @@ public class DetailTvActivity extends BaseActivity implements DetailTVView {
     TextView tvHomepage;
     @BindView(R.id.tv_sinopsis)
     TextView tvSinopsis;
+    @BindView(R.id.tv_description)
+    TextView tvDescription;
+    @BindView(R.id.tv_images)
+    TextView tvImages;
+    @BindView(R.id.v_1)
+    View vLine1;
+    @BindView(R.id.v_2)
+    View vLine2;
+    @BindView(R.id.v_3)
+    View vLine3;
+    @BindView(R.id.btn_set_favorite_tv)
+    Button btnSetFavoriteTv;
     @BindView(R.id.tv_detail_error_tv)
     TextView tvDetailErrorMovie;
     @BindView(R.id.progressBar_tv)
@@ -87,14 +105,16 @@ public class DetailTvActivity extends BaseActivity implements DetailTVView {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         ResultTv resultTv = getIntent().getParcelableExtra(EXTRA_TV);
-        Objects.requireNonNull(getSupportActionBar()).setTitle(resultTv.getName());
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.tvshow);
+        txtTitleTv.setText(resultTv.getName());
 
         showImage();
+        getDB();
 
-        if (savedInstanceState == null){
-            getDetailTvPresenter().getDetailTv(resultTv.getId(),bhsLocal,this);
-            getDetailTvPresenter().getImageTv(resultTv.getId(),bhsLocal, this);
-        }else {
+        if (savedInstanceState == null) {
+            getDetailTvPresenter().getDetailTv(resultTv.getId(), bhsLocal, this);
+            getDetailTvPresenter().getImageTv(resultTv.getId(), bhsLocal, this);
+        } else {
             imageTvItems = savedInstanceState.getParcelableArrayList(KEY_IMAGE_TV);
             detailTvItem = savedInstanceState.getParcelable(KEY_DETAIL_TV);
             detailTvAdapter.refillImage(imageTvItems);
@@ -102,9 +122,47 @@ public class DetailTvActivity extends BaseActivity implements DetailTVView {
             dataDetail(getDetailTvItem());
         }
 
+        if (LocalData.tvRepository.isTv(resultTv.getId()) == 1) {
+            btnSetFavoriteTv.setText(R.string.remove_to_favorite);
+        } else {
+            btnSetFavoriteTv.setText(R.string.add_to_favorite);
+        }
+
+        btnSetFavoriteTv.setOnClickListener(v -> {
+            if (LocalData.tvRepository.isTv(resultTv.getId()) != 1) {
+                addTvFavorite(resultTv, true);
+                btnSetFavoriteTv.setText(R.string.remove_to_favorite);
+            } else {
+                addTvFavorite(resultTv, false);
+                btnSetFavoriteTv.setText(R.string.add_to_favorite);
+            }
+
+        });
+
     }
 
-    private void showImage(){
+    private void addTvFavorite(ResultTv resultTv, boolean isAdd) {
+        Tv tv = new Tv();
+        tv.idTv = resultTv.getId();
+        tv.titleTv = resultTv.getName();
+        tv.dateTv = resultTv.getFirstAirDate();
+        tv.rateTv = resultTv.getVoteAverage();
+        tv.posterTv = resultTv.getPosterPath();
+        tv.backdropsTv = resultTv.getBackdropPath();
+
+        if (isAdd) {
+            LocalData.tvRepository.insertItemTv(tv);
+        } else {
+            LocalData.tvRepository.deleteItemTv(tv);
+        }
+    }
+
+    private void getDB() {
+        LocalData.localDatabase = LocalDatabase.getInstance(this);
+        LocalData.tvRepository = TvRepository.getInstance(TvDataSource.getInstance(LocalData.localDatabase.tvDAO()));
+    }
+
+    private void showImage() {
         detailTvAdapter = new DetailTvAdapter(imageTvItems);
         rvScreenshot.setHasFixedSize(true);
         rvScreenshot.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -112,31 +170,30 @@ public class DetailTvActivity extends BaseActivity implements DetailTVView {
     }
 
     @SuppressLint("SetTextI18n")
-    private void dataDetail(DetailTv detailTv){
+    private void dataDetail(DetailTv detailTv) {
         String[] gnrTv = new String[detailTv.getGenres().size()];
         String[] pdrTv = new String[detailTv.getProductionCompanies().size()];
 
         txtTanggalTv.setText(DateConvert.convert(detailTv.getFirstAirDate()));
         txtScoreTv.setText(detailTv.getVoteAverage().toString());
-        for (int i=0; i < detailTv.getGenres().size();i++ ){
-            gnrTv[i]=detailTv.getGenres().get(i).getName();
-            printArray(gnrTv,txtGenreTv);
+        for (int i = 0; i < detailTv.getGenres().size(); i++) {
+            gnrTv[i] = detailTv.getGenres().get(i).getName();
+            printArray(gnrTv, txtGenreTv);
         }
-        for (int m = 0;m < detailTv.getProductionCompanies().size() ;m++){
+        for (int m = 0; m < detailTv.getProductionCompanies().size(); m++) {
             pdrTv[m] = detailTv.getProductionCompanies().get(m).getName();
-            printArray(pdrTv,txtProductionTv);
+            printArray(pdrTv, txtProductionTv);
         }
         txtHomePageTv.setText(detailTv.getHomepage());
         txtSinopsisTv.setText(detailTv.getOverview());
-        ImgDownload.imgPoster(detailTv.getPosterPath(),imgPosterTv);
+        ImgDownload.imgPoster(detailTv.getPosterPath(), imgPosterTv);
+        ImgDownload.imgPoster(detailTv.getBackdropPath(), imgbackdropPathTv);
     }
 
     @Override
     public void showLoading() {
         pbLoadingDetail.setVisibility(View.VISIBLE);
-        tvDate.setVisibility(View.GONE);
         tvGenre.setVisibility(View.GONE);
-        tvScore.setVisibility(View.GONE);
         tvProduction.setVisibility(View.GONE);
         tvHomepage.setVisibility(View.GONE);
         tvSinopsis.setVisibility(View.GONE);
@@ -145,9 +202,7 @@ public class DetailTvActivity extends BaseActivity implements DetailTVView {
     @Override
     public void hideLoading() {
         pbLoadingDetail.setVisibility(View.GONE);
-        tvDate.setVisibility(View.VISIBLE);
         tvGenre.setVisibility(View.VISIBLE);
-        tvScore.setVisibility(View.VISIBLE);
         tvProduction.setVisibility(View.VISIBLE);
         tvHomepage.setVisibility(View.VISIBLE);
         tvSinopsis.setVisibility(View.VISIBLE);
@@ -162,12 +217,12 @@ public class DetailTvActivity extends BaseActivity implements DetailTVView {
     @Override
     public void onErrorData() {
         pbLoadingDetail.setVisibility(View.GONE);
-        tvDate.setVisibility(View.GONE);
         tvGenre.setVisibility(View.GONE);
-        tvScore.setVisibility(View.GONE);
         tvProduction.setVisibility(View.GONE);
         tvHomepage.setVisibility(View.GONE);
         tvSinopsis.setVisibility(View.GONE);
+        tvDescription.setVisibility(View.GONE);
+        tvImages.setVisibility(View.GONE);
         txtTanggalTv.setVisibility(View.GONE);
         txtGenreTv.setVisibility(View.GONE);
         txtScoreTv.setVisibility(View.GONE);
@@ -175,7 +230,12 @@ public class DetailTvActivity extends BaseActivity implements DetailTVView {
         txtHomePageTv.setVisibility(View.GONE);
         txtSinopsisTv.setVisibility(View.GONE);
         imgPosterTv.setVisibility(View.GONE);
+        imgbackdropPathTv.setVisibility(View.GONE);
+        btnSetFavoriteTv.setVisibility(View.GONE);
         rvScreenshot.setVisibility(View.GONE);
+        vLine1.setVisibility(View.GONE);
+        vLine2.setVisibility(View.GONE);
+        vLine3.setVisibility(View.GONE);
         tvDetailErrorMovie.setVisibility(View.VISIBLE);
     }
 

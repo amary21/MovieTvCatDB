@@ -20,8 +20,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.amary.app.data.moviecat.R;
 import com.amary.app.data.moviecat.activity.DetailMovieActivity;
+import com.amary.app.data.moviecat.activity.FavoriteActivity;
 import com.amary.app.data.moviecat.activity.SettingActivity;
-import com.amary.app.data.moviecat.adapter.MovieCatListAdapter;
+import com.amary.app.data.moviecat.adapter.MovieListAdapter;
 import com.amary.app.data.moviecat.base.BaseFragment;
 import com.amary.app.data.moviecat.model.DisMovieResponse;
 import com.amary.app.data.moviecat.model.ResultMovie;
@@ -38,7 +39,7 @@ import butterknife.ButterKnife;
  */
 public class MoviesFragment extends BaseFragment implements MovieListView {
     private ArrayList<ResultMovie> itemMovie = new ArrayList<>();
-    private MovieCatListAdapter movieCatListAdapter ;
+    private MovieListAdapter movieListAdapter;
 
     @BindView(R.id.rv_movies)
     RecyclerView rvMovies;
@@ -52,7 +53,7 @@ public class MoviesFragment extends BaseFragment implements MovieListView {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_movies, container, false);
+        return inflater.inflate(R.layout.fragment_list, container, false);
     }
 
     @Override
@@ -68,16 +69,16 @@ public class MoviesFragment extends BaseFragment implements MovieListView {
             getMovieDataPresenter().getMovieList(bhsLocal, this);
         }else {
             itemMovie = savedInstanceState.getParcelableArrayList(KEY_MOVIES_LIST);
-            movieCatListAdapter.refill(itemMovie);
+            movieListAdapter.refill(itemMovie);
         }
     }
 
     private void showData(){
-        movieCatListAdapter = new MovieCatListAdapter(itemMovie);
+        movieListAdapter = new MovieListAdapter(itemMovie);
         rvMovies.setHasFixedSize(true);
         rvMovies.setLayoutManager(new LinearLayoutManager(getContext()));
-        rvMovies.setAdapter(movieCatListAdapter);
-        movieCatListAdapter.setOnItemClickListener((view, position) -> {
+        rvMovies.setAdapter(movieListAdapter);
+        movieListAdapter.setOnItemClickListener((view, position) -> {
             Intent intent = new Intent(getActivity(), DetailMovieActivity.class);
             intent.putExtra(DetailMovieActivity.EXTRA_MOVIE, itemMovie.get(position));
             startActivity(intent);
@@ -94,6 +95,10 @@ public class MoviesFragment extends BaseFragment implements MovieListView {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.mn_app_setting) {
             Intent intent = new Intent(getActivity(), SettingActivity.class);
+            startActivity(intent);
+        }
+        if (item.getItemId() == R.id.mn_app_favorite){
+            Intent intent = new Intent(getActivity(), FavoriteActivity.class);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
@@ -116,7 +121,7 @@ public class MoviesFragment extends BaseFragment implements MovieListView {
     @Override
     public void setMovieList(DisMovieResponse movieList) {
         itemMovie = movieList.getResults();
-        movieCatListAdapter.refill(itemMovie);
+        movieListAdapter.refill(itemMovie);
     }
 
     @Override

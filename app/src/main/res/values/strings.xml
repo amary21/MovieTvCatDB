@@ -19,7 +19,11 @@
     <string name="data_404">Data Not Found</string>
     <string name="rating">9.9</string>
     <string name="synopsis">Synopsis</string>
-    <string name="score">Score :</string>
     <string name="production">Production :</string>
     <string name="homepage">Homepage :</string>
+    <string name="favorite">Favorite</string>
+    <string name="add_to_favorite">ADD TO FAVORITE</string>
+    <string name="remove_to_favorite">REMOVE FROM FAVORITE</string>
+    <string name="description">Description</string>
+    <string name="images">Images</string>
 </resources>
