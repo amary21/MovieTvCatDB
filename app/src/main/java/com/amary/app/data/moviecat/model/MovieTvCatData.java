@@ -3,7 +3,7 @@ package com.amary.app.data.moviecat.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class MovieCatData implements Parcelable {
+public class MovieTvCatData implements Parcelable {
     private int poster;
     private int screen1;
     private int screen2;
@@ -155,10 +155,10 @@ public class MovieCatData implements Parcelable {
         dest.writeString(this.sinopsis);
     }
 
-    public MovieCatData() {
+    public MovieTvCatData() {
     }
 
-    protected MovieCatData(Parcel in) {
+    private MovieTvCatData(Parcel in) {
         this.poster = in.readInt();
         this.screen1 = in.readInt();
         this.screen2 = in.readInt();
@@ -175,15 +175,15 @@ public class MovieCatData implements Parcelable {
         this.sinopsis = in.readString();
     }
 
-    public static final Parcelable.Creator<MovieCatData> CREATOR = new Parcelable.Creator<MovieCatData>() {
+    public static final Parcelable.Creator<MovieTvCatData> CREATOR = new Parcelable.Creator<MovieTvCatData>() {
         @Override
-        public MovieCatData createFromParcel(Parcel source) {
-            return new MovieCatData(source);
+        public MovieTvCatData createFromParcel(Parcel source) {
+            return new MovieTvCatData(source);
         }
 
         @Override
-        public MovieCatData[] newArray(int size) {
-            return new MovieCatData[size];
+        public MovieTvCatData[] newArray(int size) {
+            return new MovieTvCatData[size];
         }
     };
 }

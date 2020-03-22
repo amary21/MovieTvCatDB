@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".activity.DetailMovieTvActivity"
+    tools:showIn="@layout/activity_detail_movie_tv">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_date"
+            style="@style/TextKeterangan"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/release_date"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/tv_durasi"
+            style="@style/TextKeterangan"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/duration"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_date"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/tv_genre"
+            style="@style/TextKeterangan"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/genre"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_durasi"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/tv_director"
+            style="@style/TextKeterangan"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/director"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_genre"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/tv_actor"
+            style="@style/TextKeterangan"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/actors"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_director"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/txt_info_tanggal"
+            style="@style/TextInfo"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/txt_info_date"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_date"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/txt_info_durasi"
+            style="@style/TextInfo"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/txt_info_duration"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_durasi"
+            app:layout_constraintTop_toBottomOf="@+id/txt_info_tanggal"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/txt_info_genre"
+            style="@style/TextInfo"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/txt_info_genre"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_genre"
+            app:layout_constraintTop_toBottomOf="@+id/txt_info_durasi"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/txt_info_directors"
+            style="@style/TextInfo"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/txt_info_director"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_director"
+            app:layout_constraintTop_toBottomOf="@+id/txt_info_genre"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/txt_info_actors"
+            style="@style/TextInfo"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/txt_info_actors"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_actor"
+            app:layout_constraintTop_toBottomOf="@+id/txt_info_directors"
+            tools:ignore="MissingConstraints" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="140dp" />
+        <HorizontalScrollView
+            android:id="@+id/hsv_screenshot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@+id/guideline2"
+            android:layout_below="@+id/tv_actor"
+            android:layout_marginTop="16dp"
+            tools:ignore="MissingConstraints">
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:id="@+id/img_screen_1"
+                    style="@style/ImgScreenShot"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:contentDescription="@string/todo"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:ignore="MissingConstraints" />
+
+                <ImageView
+                    android:id="@+id/img_screen_2"
+                    style="@style/ImgScreenShot"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:contentDescription="@string/todo"
+                    app:layout_constraintStart_toEndOf="@+id/img_screen_1"
+                    tools:ignore="MissingConstraints" />
+
+                <ImageView
+                    android:id="@+id/img_screen_3"
+                    style="@style/ImgScreenShot"
+                    android:layout_width="232dp"
+                    android:layout_height="125dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:contentDescription="@string/todo"
+                    app:layout_constraintStart_toEndOf="@+id/img_screen_2"
+                    tools:ignore="MissingConstraints" />
+
+                <ImageView
+                    android:id="@+id/img_screen_4"
+                    style="@style/ImgScreenShot"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:contentDescription="@string/todo"
+                    app:layout_constraintStart_toEndOf="@+id/img_screen_3"
+                    tools:ignore="MissingConstraints" />
+
+                <ImageView
+                    android:id="@+id/img_screen_5"
+                    style="@style/ImgScreenShot"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:contentDescription="@string/todo"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/img_screen_4"
+                    tools:ignore="MissingConstraints" />
+            </android.support.constraint.ConstraintLayout>
+        </HorizontalScrollView>
+
+
+        <TextView
+            android:id="@+id/txt_info_overview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/hsv_screenshot"
+            tools:ignore="MissingConstraints" />
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.v4.widget.NestedScrollView>
