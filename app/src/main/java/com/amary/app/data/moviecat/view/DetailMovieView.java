@@ -1,7 +1,7 @@
 package com.amary.app.data.moviecat.view;
 
-import com.amary.app.data.moviecat.model.DetailMovie;
-import com.amary.app.data.moviecat.model.GetImageMovie;
+import com.amary.app.data.moviecat.data.networking.model.DetailMovie;
+import com.amary.app.data.moviecat.data.networking.model.GetImageMovie;
 
 public interface DetailMovieView {
     void showLoading();

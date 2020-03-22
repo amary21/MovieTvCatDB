@@ -1,8 +1,8 @@
 package com.amary.app.data.moviecat.utils;
 
-import com.amary.app.data.moviecat.database.datasource.MovieRepository;
-import com.amary.app.data.moviecat.database.datasource.TvRepository;
-import com.amary.app.data.moviecat.database.local.LocalDatabase;
+import com.amary.app.data.moviecat.data.database.datasource.MovieRepository;
+import com.amary.app.data.moviecat.data.database.datasource.TvRepository;
+import com.amary.app.data.moviecat.data.database.local.LocalDatabase;
 
 public class LocalData {
 

@@ -26,4 +26,13 @@
     <string name="remove_to_favorite">REMOVE FROM FAVORITE</string>
     <string name="description">Description</string>
     <string name="images">Images</string>
+    <string name="search">Search</string>
+    <string name="appwidget_text">My Favorite Movie</string>
+    <string name="refresh">Refresh</string>
+    <string name="daily_reminder">Daily Reminder</string>
+    <string name="release_today_reminder">Release Today Reminder</string>
+    <string name="daily_message">"let's check the application, lots of interesting movies and TV shows"</string>
+    <string name="release_check">"has been released, let's check in full"</string>
+    <string name="now_playing_check">"now playing, let's check in full"</string>
+    <string name="release_month">"released this month, check full in the application"</string>
 </resources>

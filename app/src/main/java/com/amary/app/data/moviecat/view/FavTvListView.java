@@ -1,6 +1,6 @@
 package com.amary.app.data.moviecat.view;
 
-import com.amary.app.data.moviecat.database.model_db.Tv;
+import com.amary.app.data.moviecat.data.database.model_db.Tv;
 
 import java.util.List;
 

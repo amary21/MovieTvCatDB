@@ -1,7 +1,7 @@
 package com.amary.app.data.moviecat.view;
 
-import com.amary.app.data.moviecat.model.DetailTv;
-import com.amary.app.data.moviecat.model.GetImageTv;
+import com.amary.app.data.moviecat.data.networking.model.DetailTv;
+import com.amary.app.data.moviecat.data.networking.model.GetImageTv;
 
 public interface DetailTVView {
     void showLoading();

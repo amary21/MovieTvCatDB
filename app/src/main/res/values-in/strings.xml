@@ -27,4 +27,13 @@
     <string name="favorite">Favorit</string>
     <string name="images">Gambar</string>
     <string name="remove_to_favorite">HAPUS DARI FAVORIT</string>
+    <string name="search">Cari</string>
+    <string name="appwidget_text">My Favorite Movie</string>
+    <string name="refresh">Muat Ulang</string>
+    <string name="daily_reminder">Pengingat Harian</string>
+    <string name="release_today_reminder">Pengingat Rilis Hari Ini</string>
+    <string name="daily_message">"Ayo cek aplikasi, banyak film dan acara Tv yang menarik loh...."</string>
+    <string name="release_check">"telah rilis, ayo cek selengkapnya"</string>
+    <string name="now_playing_check">"sedang diputar, ayo cek selengkapnya"</string>
+    <string name="release_month">"dirilis bulan ini, periksa lengkap di aplikasi"</string>
 </resources>

@@ -1,10 +1,10 @@
 package com.amary.app.data.moviecat.presenter;
 
-import com.amary.app.data.moviecat.model.DetailMovie;
-import com.amary.app.data.moviecat.model.GetImageMovie;
-import com.amary.app.data.moviecat.networking.Api;
-import com.amary.app.data.moviecat.networking.ApiClient;
-import com.amary.app.data.moviecat.networking.ApiServer;
+import com.amary.app.data.moviecat.data.networking.Api;
+import com.amary.app.data.moviecat.data.networking.ApiClient;
+import com.amary.app.data.moviecat.data.networking.ApiServer;
+import com.amary.app.data.moviecat.data.networking.model.DetailMovie;
+import com.amary.app.data.moviecat.data.networking.model.GetImageMovie;
 import com.amary.app.data.moviecat.view.DetailMovieView;
 
 import io.reactivex.Observer;
