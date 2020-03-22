@@ -1,164 +1,139 @@
 package com.amary.app.data.moviecat.activity.fragment;
 
-
-
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.amary.app.data.moviecat.activity.DetailMovieTvActivity;
-import com.amary.app.data.moviecat.customclick.ItemClickSupport;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.amary.app.data.moviecat.R;
+import com.amary.app.data.moviecat.activity.DetailMovieActivity;
 import com.amary.app.data.moviecat.activity.SettingActivity;
-import com.amary.app.data.moviecat.adapter.MovieCatGridAdapter;
 import com.amary.app.data.moviecat.adapter.MovieCatListAdapter;
-import com.amary.app.data.moviecat.model.MovieTvCatData;
+import com.amary.app.data.moviecat.base.BaseFragment;
+import com.amary.app.data.moviecat.model.DisMovieResponse;
+import com.amary.app.data.moviecat.model.ResultMovie;
+import com.amary.app.data.moviecat.view.MovieListView;
 
 import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MoviesFragment extends Fragment {
-    private TypedArray dataPoster;
-    private TypedArray dataScreen1;
-    private TypedArray dataScreen2;
-    private TypedArray dataScreen3;
-    private TypedArray dataScreen4;
-    private TypedArray dataScreen5;
-    private String[] dataJudul;
-    private String[] dataThnRilis;
-    private String[] dataTglRilis;
-    private String[] dataDurasi;
-    private String[] dataGenre;
-    private String[] dataDirectors;
-    private String[] dataActors;
-    private String[] dataSinopsis;
-    private ArrayList<MovieTvCatData> movieTvCatData = new ArrayList<>();
-    private RecyclerView rvMovies;
+public class MoviesFragment extends BaseFragment implements MovieListView {
+    private ArrayList<ResultMovie> itemMovie = new ArrayList<>();
+    private MovieCatListAdapter movieCatListAdapter ;
+
+    @BindView(R.id.rv_movies)
+    RecyclerView rvMovies;
+    @BindView(R.id.pb_loading)
+    ProgressBar pbLoading;
+    @BindView(R.id.tv_error_get)
+    TextView tvErrorGet;
 
     public MoviesFragment() {
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_movies, container, false);
-        rvMovies = view.findViewById(R.id.rv_movies);
-        rvMovies.setHasFixedSize(true);
+        return inflater.inflate(R.layout.fragment_movies, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this,view);
+        String bhsLocal = getString(R.string.localization);
         setHasOptionsMenu(true);
 
-        showRecyclerListMovies();
-        return view;
+        showData();
+
+        if (savedInstanceState ==null){
+            getMovieDataPresenter().getMovieList(bhsLocal, this);
+        }else {
+            itemMovie = savedInstanceState.getParcelableArrayList(KEY_MOVIES_LIST);
+            movieCatListAdapter.refill(itemMovie);
+        }
+    }
+
+    private void showData(){
+        movieCatListAdapter = new MovieCatListAdapter(itemMovie);
+        rvMovies.setHasFixedSize(true);
+        rvMovies.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvMovies.setAdapter(movieCatListAdapter);
+        movieCatListAdapter.setOnItemClickListener((view, position) -> {
+            Intent intent = new Intent(getActivity(), DetailMovieActivity.class);
+            intent.putExtra(DetailMovieActivity.EXTRA_MOVIE, itemMovie.get(position));
+            startActivity(intent);
+        });
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_list_rv, menu);
+        inflater.inflate(R.menu.menu_app_bar, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.mn_list:
-                showRecyclerListMovies();
-                break;
-            case R.id.mn_grid:
-                showRecyclerGridMovies();
-                break;
-            case R.id.mn_setting:
-                Intent intent = new Intent(getActivity(), SettingActivity.class);
-                startActivity(intent);
-                break;
+        if (item.getItemId() == R.id.mn_app_setting) {
+            Intent intent = new Intent(getActivity(), SettingActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void showRecyclerListMovies(){
-        prepareMovies();
-        rvMovies.setLayoutManager(new LinearLayoutManager(getActivity()));
-        MovieCatListAdapter movieCatListAdapter = new MovieCatListAdapter(getActivity());
-        addItem();
-        movieCatListAdapter.setMovieTvCatData(movieTvCatData);
-        rvMovies.setAdapter(movieCatListAdapter);
-        ItemClickSupport.addTo(rvMovies).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-            @Override
-            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                selectedItem(movieTvCatData.get(position));
-            }
-        });
+    @Override
+    public void showLoading() {
+        pbLoading.setVisibility(View.VISIBLE);
+        rvMovies.setVisibility(View.GONE);
+        tvErrorGet.setVisibility(View.GONE);
     }
 
-    private void showRecyclerGridMovies(){
-        prepareMovies();
-        rvMovies.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        MovieCatGridAdapter movieCatGridAdapter = new MovieCatGridAdapter(getActivity());
-        addItem();
-        movieCatGridAdapter.setMovieTvCatData(movieTvCatData);
-        rvMovies.setAdapter(movieCatGridAdapter);
-        ItemClickSupport.addTo(rvMovies).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-            @Override
-            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                selectedItem(movieTvCatData.get(position));
-            }
-        });
+    @Override
+    public void hideLoading() {
+        pbLoading.setVisibility(View.GONE);
+        tvErrorGet.setVisibility(View.GONE);
+        rvMovies.setVisibility(View.VISIBLE);
     }
 
-    private void addItem(){
-        movieTvCatData = new ArrayList<>();
-
-        for (int i=0; i < dataJudul.length; i++){
-            MovieTvCatData movie = new MovieTvCatData();
-            movie.setPoster(dataPoster.getResourceId(i, -1));
-            movie.setScreen1(dataScreen1.getResourceId(i,-1));
-            movie.setScreen2(dataScreen2.getResourceId(i,-1));
-            movie.setScreen3(dataScreen3.getResourceId(i,-1));
-            movie.setScreen4(dataScreen4.getResourceId(i,-1));
-            movie.setScreen5(dataScreen5.getResourceId(i,-1));
-            movie.setJudul(dataJudul[i]);
-            movie.setThnRilis(dataThnRilis[i]);
-            movie.setTglRilis(dataTglRilis[i]);
-            movie.setDurasiMovie(dataDurasi[i]);
-            movie.setGenreMovie(dataGenre[i]);
-            movie.setDirectors(dataDirectors[i]);
-            movie.setActors(dataActors[i]);
-            movie.setSinopsis(dataSinopsis[i]);
-            movieTvCatData.add(movie);
-        }
+    @Override
+    public void setMovieList(DisMovieResponse movieList) {
+        itemMovie = movieList.getResults();
+        movieCatListAdapter.refill(itemMovie);
     }
 
-    private void prepareMovies(){
-        dataJudul       = getResources().getStringArray(R.array.judul_data);
-        dataThnRilis    = getResources().getStringArray(R.array.thn_rilis_data);
-        dataTglRilis    = getResources().getStringArray(R.array.tanggal_rilis_data);
-        dataDurasi      = getResources().getStringArray(R.array.durasi_data);
-        dataGenre       = getResources().getStringArray(R.array.genre_data);
-        dataDirectors   = getResources().getStringArray(R.array.director_data);
-        dataActors      = getResources().getStringArray(R.array.actors_data);
-        dataSinopsis    = getResources().getStringArray(R.array.sinopsis_data);
-        dataPoster      = getResources().obtainTypedArray(R.array.poster_data);
-        dataScreen1     = getResources().obtainTypedArray(R.array.screen_1_data);
-        dataScreen2     = getResources().obtainTypedArray(R.array.screen_2_data);
-        dataScreen3     = getResources().obtainTypedArray(R.array.screen_3_data);
-        dataScreen4     = getResources().obtainTypedArray(R.array.screen_4_data);
-        dataScreen5     = getResources().obtainTypedArray(R.array.screen_5_data);
+    @Override
+    public void onErrorLoading(String message) {
+        pbLoading.setVisibility(View.GONE);
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
 
-    private void selectedItem(MovieTvCatData movie){
-        Intent intent = new Intent(getActivity(), DetailMovieTvActivity.class);
-        intent.putExtra(DetailMovieTvActivity.EXTRA_MOVIE, movie);
-        startActivity(intent);
+    @Override
+    public void onErrorData() {
+        tvErrorGet.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putParcelableArrayList(KEY_MOVIES_LIST, itemMovie);
+        super.onSaveInstanceState(outState);
+    }
 }
+

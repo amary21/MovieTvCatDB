@@ -1,51 +1,49 @@
 package com.amary.app.data.moviecat.activity.fragment;
 
-
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.amary.app.data.moviecat.activity.DetailMovieTvActivity;
-import com.amary.app.data.moviecat.customclick.ItemClickSupport;
 import com.amary.app.data.moviecat.R;
+import com.amary.app.data.moviecat.activity.DetailTvActivity;
 import com.amary.app.data.moviecat.activity.SettingActivity;
-import com.amary.app.data.moviecat.adapter.MovieCatListAdapter;
-import com.amary.app.data.moviecat.adapter.TvShowGridAdapter;
-import com.amary.app.data.moviecat.model.MovieTvCatData;
+import com.amary.app.data.moviecat.adapter.TvShowListAdapter;
+import com.amary.app.data.moviecat.base.BaseFragment;
+import com.amary.app.data.moviecat.model.DisTvResponse;
+import com.amary.app.data.moviecat.model.ResultTv;
+import com.amary.app.data.moviecat.view.TvShowListView;
 
 import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TvShowFragment extends Fragment {
-    private TypedArray dataPoster;
-    private TypedArray dataScreen1;
-    private TypedArray dataScreen2;
-    private TypedArray dataScreen3;
-    private TypedArray dataScreen4;
-    private TypedArray dataScreen5;
-    private String[] dataJudul;
-    private String[] dataThnRilis;
-    private String[] dataTglRilis;
-    private String[] dataDurasi;
-    private String[] dataGenre;
-    private String[] dataDirectors;
-    private String[] dataActors;
-    private String[] dataSinopsis;
-    private ArrayList<MovieTvCatData> movieTvCatData = new ArrayList<>();
-    private RecyclerView rvTvShows;
+public class TvShowFragment extends BaseFragment implements TvShowListView {
+    private ArrayList<ResultTv> itemTv = new ArrayList<>();
+    private TvShowListAdapter tvShowListAdapter;
+
+    @BindView(R.id.rv_movies)
+    RecyclerView rvTvShows;
+    @BindView(R.id.pb_loading)
+    ProgressBar pbLoading;
+    @BindView(R.id.tv_error_get)
+    TextView tvErrorGet;
 
     public TvShowFragment() {
     }
@@ -53,112 +51,90 @@ public class TvShowFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_movies, container, false);
-        rvTvShows = view.findViewById(R.id.rv_movies);
-        rvTvShows.setHasFixedSize(true);
+        return inflater.inflate(R.layout.fragment_movies, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this,view);
+        String bhsLocal = getString(R.string.localization);
         setHasOptionsMenu(true);
 
-        showRecyclerListTvShow();
-        return view;
+        showData();
+
+        if (savedInstanceState == null){
+            getTvDataPresenter().getTvList(bhsLocal,this);
+        }else {
+            itemTv = savedInstanceState.getParcelableArrayList(KEY_TV_LIST);
+            tvShowListAdapter.refill(itemTv);
+        }
+
+
+    }
+
+    private void showData(){
+        tvShowListAdapter = new TvShowListAdapter(itemTv);
+        rvTvShows.setHasFixedSize(true);
+        rvTvShows.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvTvShows.setAdapter(tvShowListAdapter);
+        tvShowListAdapter.setOnItemClickListener((view, position) -> {
+            Intent intent = new Intent(getActivity(), DetailTvActivity.class);
+            intent.putExtra(DetailTvActivity.EXTRA_TV, itemTv.get(position));
+            startActivity(intent);
+        });
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_list_rv, menu);
+        inflater.inflate(R.menu.menu_app_bar, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.mn_list:
-                showRecyclerListTvShow();
-                break;
-            case R.id.mn_grid:
-                showRecyclerGridTvShow();
-                break;
-            case R.id.mn_setting:
-                Intent intent = new Intent(getActivity(), SettingActivity.class);
-                startActivity(intent);
-                break;
+        if (item.getItemId() == R.id.mn_app_setting) {
+            Intent intent = new Intent(getActivity(), SettingActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void showRecyclerListTvShow(){
-        prepareTvShow();
-        rvTvShows.setLayoutManager(new LinearLayoutManager(getActivity()));
-        MovieCatListAdapter movieCatListAdapter = new MovieCatListAdapter(getActivity());
-        addItem();
-        movieCatListAdapter.setMovieTvCatData(movieTvCatData);
-        rvTvShows.setAdapter(movieCatListAdapter);
-        ItemClickSupport.addTo(rvTvShows).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-            @Override
-            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                selectedItem(movieTvCatData.get(position));
-            }
-        });
+    @Override
+    public void showLoading() {
+        pbLoading.setVisibility(View.VISIBLE);
+        rvTvShows.setVisibility(View.GONE);
+        tvErrorGet.setVisibility(View.GONE);
     }
 
-    private void showRecyclerGridTvShow(){
-        prepareTvShow();
-        rvTvShows.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        TvShowGridAdapter tvShowGridAdapter = new TvShowGridAdapter(getActivity());
-        addItem();
-        tvShowGridAdapter.setMovieTvCatData(movieTvCatData);
-        rvTvShows.setAdapter(tvShowGridAdapter);
-        ItemClickSupport.addTo(rvTvShows).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-            @Override
-            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                selectedItem(movieTvCatData.get(position));
-            }
-        });
+    @Override
+    public void hideLoading() {
+        pbLoading.setVisibility(View.GONE);
+        tvErrorGet.setVisibility(View.GONE);
+        rvTvShows.setVisibility(View.VISIBLE);
     }
 
-    private void addItem(){
-        movieTvCatData = new ArrayList<>();
-
-        for (int i=0; i < dataJudul.length; i++){
-            MovieTvCatData movie = new MovieTvCatData();
-            movie.setPoster(dataPoster.getResourceId(i, -1));
-            movie.setScreen1(dataScreen1.getResourceId(i,-1));
-            movie.setScreen2(dataScreen2.getResourceId(i,-1));
-            movie.setScreen3(dataScreen3.getResourceId(i,-1));
-            movie.setScreen4(dataScreen4.getResourceId(i,-1));
-            movie.setScreen5(dataScreen5.getResourceId(i,-1));
-            movie.setJudul(dataJudul[i]);
-            movie.setThnRilis(dataThnRilis[i]);
-            movie.setTglRilis(dataTglRilis[i]);
-            movie.setDurasiMovie(dataDurasi[i]);
-            movie.setGenreMovie(dataGenre[i]);
-            movie.setDirectors(dataDirectors[i]);
-            movie.setActors(dataActors[i]);
-            movie.setSinopsis(dataSinopsis[i]);
-            movieTvCatData.add(movie);
-        }
+    @Override
+    public void setTvList(DisTvResponse tvList) {
+        itemTv = tvList.getResults();
+        tvShowListAdapter.refill(itemTv);
     }
 
-    private void prepareTvShow(){
-        dataJudul       = getResources().getStringArray(R.array.judul_tvshow);
-        dataThnRilis    = getResources().getStringArray(R.array.thn_rilis_tvshow);
-        dataTglRilis    = getResources().getStringArray(R.array.tanggal_rilis_tvshow);
-        dataDurasi      = getResources().getStringArray(R.array.durasi_tvshow);
-        dataGenre       = getResources().getStringArray(R.array.genre_tvshow);
-        dataDirectors   = getResources().getStringArray(R.array.creator_tvshow);
-        dataActors      = getResources().getStringArray(R.array.actors_tvshow);
-        dataSinopsis    = getResources().getStringArray(R.array.sinopsis_tvshow);
-        dataPoster      = getResources().obtainTypedArray(R.array.poster_tvshow);
-        dataScreen1     = getResources().obtainTypedArray(R.array.screen_1_tvshow);
-        dataScreen2     = getResources().obtainTypedArray(R.array.screen_2_tvshow);
-        dataScreen3     = getResources().obtainTypedArray(R.array.screen_3_tvshow);
-        dataScreen4     = getResources().obtainTypedArray(R.array.screen_4_tvshow);
-        dataScreen5     = getResources().obtainTypedArray(R.array.screen_5_tvshow);
+
+    @Override
+    public void onErrorLoading(String message) {
+        pbLoading.setVisibility(View.GONE);
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
 
-    private void selectedItem(MovieTvCatData tvshow){
-        Intent intent = new Intent(getActivity(), DetailMovieTvActivity.class);
-        intent.putExtra(DetailMovieTvActivity.EXTRA_MOVIE, tvshow);
-        startActivity(intent);
+    @Override
+    public void onErrorData() {
+        tvErrorGet.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putParcelableArrayList(KEY_TV_LIST, itemTv);
+        super.onSaveInstanceState(outState);
+    }
 }

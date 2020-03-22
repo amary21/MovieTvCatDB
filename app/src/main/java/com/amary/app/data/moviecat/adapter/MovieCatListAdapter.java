@@ -1,34 +1,38 @@
 package com.amary.app.data.moviecat.adapter;
 
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.amary.app.data.moviecat.R;
-import com.amary.app.data.moviecat.model.MovieTvCatData;
-import com.bumptech.glide.Glide;
+import com.amary.app.data.moviecat.model.ResultMovie;
+import com.amary.app.data.moviecat.utils.DateConvert;
+import com.amary.app.data.moviecat.utils.ImgDownload;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MovieCatListAdapter extends RecyclerView.Adapter<MovieCatListAdapter.CategoryViewHolder> {
-    private Context context;
-    private ArrayList<MovieTvCatData> movieTvCatData;
+    private ArrayList<ResultMovie> movieData;
+    private static ClickListener clickListener;
 
-    public MovieCatListAdapter(Context context) {
-        this.context = context;
+    public MovieCatListAdapter(ArrayList<ResultMovie> movieData) {
+        this.movieData = movieData;
     }
 
-    public ArrayList<MovieTvCatData> getMovieTvCatData() {
-        return movieTvCatData;
-    }
+    public void refill(ArrayList<ResultMovie> movieData){
+        this.movieData =new ArrayList<>();
+        this.movieData.addAll(movieData);
 
-    public void setMovieTvCatData(ArrayList<MovieTvCatData> movieTvCatData) {
-        this.movieTvCatData = movieTvCatData;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -38,36 +42,56 @@ public class MovieCatListAdapter extends RecyclerView.Adapter<MovieCatListAdapte
         return new CategoryViewHolder(item);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull CategoryViewHolder categoryViewHolder, int i) {
-        categoryViewHolder.txtJudul.setText(getMovieTvCatData().get(i).getJudul());
-        categoryViewHolder.txtTahunRilis.setText(getMovieTvCatData().get(i).getThnRilis());
-        categoryViewHolder.txtDurasi.setText(getMovieTvCatData().get(i).getDurasiMovie());
-        categoryViewHolder.txtGenre.setText(getMovieTvCatData().get(i).getGenreMovie());
-        Glide.with(context)
-                .load(getMovieTvCatData().get(i).getPoster())
-                .into(categoryViewHolder.imgPoster);
+        categoryViewHolder.onBind(movieData.get(i));
     }
 
     @Override
     public int getItemCount() {
-        return getMovieTvCatData().size();
+        return movieData.size();
     }
 
-    public class CategoryViewHolder extends RecyclerView.ViewHolder {
-        private ImageView imgPoster;
-        private TextView txtJudul;
-        private TextView txtTahunRilis;
-        private TextView txtDurasi;
-        private TextView txtGenre;
+    public class CategoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        @BindView(R.id.img_poster)
+        ImageView imgPoster;
+        @BindView(R.id.txt_judul)
+        TextView txtJudul;
+        @BindView(R.id.txt_tgl_rilis)
+        TextView txtTglRilis;
+        @BindView(R.id.txt_rating)
+        TextView txtRating;
 
-        public CategoryViewHolder(@NonNull View itemView) {
+
+        CategoryViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgPoster       = itemView.findViewById(R.id.img_poster);
-            txtJudul        = itemView.findViewById(R.id.txt_judul);
-            txtTahunRilis   = itemView.findViewById(R.id.txt_thn_rilis);
-            txtDurasi       = itemView.findViewById(R.id.txt_durasi);
-            txtGenre        = itemView.findViewById(R.id.txt_genre);
+            ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            clickListener.onClick(v, getAdapterPosition());
+        }
+
+        @SuppressLint("SetTextI18n")
+        void onBind(ResultMovie resultMovie) {
+            txtJudul.setText(resultMovie.getTitle());
+            txtTglRilis.setText(DateConvert.convert(resultMovie.getReleaseDate()));
+            txtRating.setText(resultMovie.getVoteAverage().toString());
+            ImgDownload.imgPoster(resultMovie.getPosterPath(),imgPoster);
         }
     }
+
+    public void setOnItemClickListener(ClickListener clickListener) {
+        MovieCatListAdapter.clickListener = clickListener;
+    }
+
+
+    public interface ClickListener {
+        void onClick(View view, int position);
+
+    }
 }
+

@@ -1,59 +1,58 @@
 package com.amary.app.data.moviecat.activity;
 
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.MenuItem;
 
-import com.amary.app.data.moviecat.R;
-import com.amary.app.data.moviecat.activity.fragment.MoviesFragment;
-import com.amary.app.data.moviecat.activity.fragment.TvShowFragment;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
 
-import java.util.Objects;
+import com.amary.app.data.moviecat.adapter.MenuTabAdapter;
+import com.amary.app.data.moviecat.base.BaseActivity;
+import com.google.android.material.tabs.TabLayout;
 
-public class MainActivity extends AppCompatActivity {
-    private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener = new
-            BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-            Fragment fragment;
-            switch (menuItem.getItemId()){
-                case R.id.nv_movie:
-                    //fragment movie
-                    fragment = new MoviesFragment();
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.fl_container, fragment)
-                            .commit();
-                    Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.tvshow);
-                    return true;
-                case R.id.nv_tvshow:
-                    //fragment tvshow
-                    fragment = new TvShowFragment();
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.fl_container, fragment)
-                            .commit();
-                    Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.tvshow);
-                    return true;
-            }
-            return false;
-        }
-    };
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+import static com.amary.app.data.moviecat.R.id;
+import static com.amary.app.data.moviecat.R.layout;
+
+public class MainActivity extends BaseActivity {
+
+    @BindView(id.tab_menu)
+    TabLayout tabMenu;
+    @BindView(id.fl_container)
+    ViewPager viewMenu;
+    @BindView(id.toolbar_main)
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(layout.activity_main);
 
-        BottomNavigationView naviBottom = findViewById(R.id.bnv_layout);
-        naviBottom.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
-        if (savedInstanceState == null){
-            naviBottom.setSelectedItemId(R.id.nv_movie);
-            Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.movies);
-        }
+        ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
+
+        MenuTabAdapter adapter = new MenuTabAdapter(getSupportFragmentManager(), tabMenu.getTabCount());
+        viewMenu.setAdapter(adapter);
+        viewMenu.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabMenu));
+        tabMenu.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewMenu.setCurrentItem(tab.getPosition());
+            }
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) { }
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) { }
+        });
+
 
     }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
+
 }

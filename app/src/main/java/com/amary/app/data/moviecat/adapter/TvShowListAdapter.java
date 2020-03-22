@@ -1,34 +1,39 @@
 package com.amary.app.data.moviecat.adapter;
 
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.amary.app.data.moviecat.R;
-import com.amary.app.data.moviecat.model.MovieTvCatData;
-import com.bumptech.glide.Glide;
+import com.amary.app.data.moviecat.model.ResultTv;
+import com.amary.app.data.moviecat.utils.DateConvert;
+import com.amary.app.data.moviecat.utils.ImgDownload;
 
 import java.util.ArrayList;
 
-public class TvShowListAdapter extends RecyclerView.Adapter<TvShowListAdapter.CategoryViewHolder>{
-    private Context context;
-    private ArrayList<MovieTvCatData> movieTvCatData;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-    public TvShowListAdapter(Context context) {
-        this.context = context;
+public class TvShowListAdapter extends RecyclerView.Adapter<TvShowListAdapter.CategoryViewHolder> {
+
+    private ArrayList<ResultTv> tvData;
+    private static ClickListener clickListener;
+
+    public TvShowListAdapter(ArrayList<ResultTv> tvData) {
+        this.tvData = tvData;
     }
 
-    public ArrayList<MovieTvCatData> getMovieTvCatData() {
-        return movieTvCatData;
-    }
+    public void refill(ArrayList<ResultTv> tvData){
+        this.tvData = new ArrayList<>();
+        this.tvData.addAll(tvData);
 
-    public void setMovieTvCatData(ArrayList<MovieTvCatData> movieTvCatData) {
-        this.movieTvCatData = movieTvCatData;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -38,36 +43,53 @@ public class TvShowListAdapter extends RecyclerView.Adapter<TvShowListAdapter.Ca
         return new CategoryViewHolder(item);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull CategoryViewHolder categoryViewHolder, int i) {
-        categoryViewHolder.txtJudul.setText(getMovieTvCatData().get(i).getJudul());
-        categoryViewHolder.txtTahunRilis.setText(getMovieTvCatData().get(i).getThnRilis());
-        categoryViewHolder.txtDurasi.setText(getMovieTvCatData().get(i).getDurasiMovie());
-        categoryViewHolder.txtGenre.setText(getMovieTvCatData().get(i).getGenreMovie());
-        Glide.with(context)
-                .load(getMovieTvCatData().get(i).getPoster())
-                .into(categoryViewHolder.imgPoster);
+        categoryViewHolder.onBind(tvData.get(i));
     }
 
     @Override
     public int getItemCount() {
-        return getMovieTvCatData().size();
+        return tvData.size();
     }
 
-    public class CategoryViewHolder extends RecyclerView.ViewHolder {
-        private ImageView imgPoster;
-        private TextView txtJudul;
-        private TextView txtTahunRilis;
-        private TextView txtDurasi;
-        private TextView txtGenre;
+    public class CategoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        @BindView(R.id.img_poster)
+        ImageView imgPoster;
+        @BindView(R.id.txt_judul)
+        TextView txtJudul;
+        @BindView(R.id.txt_tgl_rilis)
+        TextView txtTglRilis;
+        @BindView(R.id.txt_rating)
+        TextView txtRating;
 
-        public CategoryViewHolder(@NonNull View itemView) {
+        CategoryViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgPoster       = itemView.findViewById(R.id.img_poster);
-            txtJudul        = itemView.findViewById(R.id.txt_judul);
-            txtTahunRilis   = itemView.findViewById(R.id.txt_thn_rilis);
-            txtDurasi       = itemView.findViewById(R.id.txt_durasi);
-            txtGenre        = itemView.findViewById(R.id.txt_genre);
+            ButterKnife.bind(this,itemView);
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            clickListener.onClick(v, getAdapterPosition());
+        }
+
+        @SuppressLint("SetTextI18n")
+        void onBind(ResultTv resultTv) {
+            txtJudul.setText(resultTv.getName());
+            txtTglRilis.setText(DateConvert.convert(resultTv.getFirstAirDate()));
+            txtRating.setText(resultTv.getVoteAverage().toString());
+            ImgDownload.imgPoster(resultTv.getPosterPath(),imgPoster);
+        }
+    }
+
+    public void setOnItemClickListener(ClickListener clickListener) {
+        TvShowListAdapter.clickListener = clickListener;
+    }
+
+
+    public interface ClickListener {
+        void onClick(View view, int position);
     }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.amary.app.data.moviecat">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -10,25 +11,15 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activity.DetailTvActivity"/>
+        <activity android:name=".activity.DetailMovieActivity" />
         <activity
-            android:name=".activity.DetailMovieTvActivity"
-            android:label="@string/title_activity_detail_movie_tv"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".activity.SettingActivity" />
+            android:name=".activity.SettingActivity" />
         <activity
-            android:name=".activity.DetailMovieActivityOld"
-            android:label="@string/title_activity_detail_movie"
+            android:name=".activity.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
-        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
