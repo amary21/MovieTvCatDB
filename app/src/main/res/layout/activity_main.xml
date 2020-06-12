@@ -7,9 +7,10 @@
     android:background="@color/White"
     tools:context=".activity.MainActivity">
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/lv_moviecat"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        tools:listitem="@layout/item_moviecat"/>
 
 </LinearLayout>
