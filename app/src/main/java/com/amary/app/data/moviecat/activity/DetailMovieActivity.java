@@ -2,21 +2,16 @@ package com.amary.app.data.moviecat.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amary.app.data.moviecat.R;
 import com.amary.app.data.moviecat.model.MovieCatData;
 import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
 
 public class DetailMovieActivity extends AppCompatActivity {
     public static final String EXTRA_MOVIE = "extra_movie";
