@@ -14,7 +14,7 @@
         android:layout_margin="8dp"
         android:layout_above="@+id/bnv_layout"/>
 
-    <android.support.design.widget.BottomNavigationView
+    <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bnv_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
